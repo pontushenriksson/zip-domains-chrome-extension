@@ -30,11 +30,18 @@ function parseCsv(data) {
 chrome.webRequest.onBeforeRequest.addListener(
   function (details) {
     var url = new URL(details.url);
+    if (url.protocol === 'file:') {
+      return;
+    }
     if (
       blockedHosts.includes(url.hostname) &&
       !allowedHosts.includes(url.hostname)
     ) {
-      return { redirectUrl: chrome.extension.getURL('index.html') };
+      return {
+        redirectUrl: chrome.extension.getURL(
+          'warning-zip-domain-blocker-website.html'
+        ),
+      };
     }
   },
   { urls: ['<all_urls>'] },
@@ -44,6 +51,9 @@ chrome.webRequest.onBeforeRequest.addListener(
 chrome.webRequest.onBeforeRequest.addListener(
   function (details) {
     var url = new URL(details.url);
+    if (url.protocol === 'file:') {
+      return;
+    }
     if (
       blockedHosts.includes(url.hostname) &&
       !allowedHosts.includes(url.hostname)
